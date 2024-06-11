@@ -59,6 +59,7 @@ class RequestStoreOrUpdateUser extends FormRequest
             'avatar.max' => 'Gambar tidak boleh lebih dari 2MB.',
             'confirmation_password.required' => 'Kolom konfirmasi password harus diisi.',
             'confirmation_password.same' => 'Konfirmasi password tidak sama.',
+            'username.required' => 'Kolom username harus diisi.',
         ];
     }
 }
