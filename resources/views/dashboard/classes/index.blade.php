@@ -34,8 +34,8 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $class->kelas }}</td>
-                                    <td>{{ $class->kompetensi_keahlian }}</td>
                                     <td>{{ $class->kode_kelas }}</td>
+                                    <td>{{ $class->kompetensi_keahlian }}</td>
                                     <td>@currency($class->nominal_spp)</td>
                                     <td>{{ $class->tahun_ajaran }}</td>
                                     <td width="75">

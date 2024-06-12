@@ -264,7 +264,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ 2 + count($months) * 6 }}">Tidak ada data</td>
+                                    <td colspan="{{ 2 + count($months) * 7 }}">Tidak ada data</td>
                                 </tr>
                             @endforelse
                         </tbody>
