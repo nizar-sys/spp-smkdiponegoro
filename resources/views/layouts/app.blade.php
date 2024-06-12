@@ -1,5 +1,10 @@
 @php
     $userAuth = Auth::user();
+    $isSiswa = false;
+    if (Session::has('nis')) {
+        $userAuth = App\Models\Siswa::where('nis', Session::get('nis'))->first();
+        $isSiswa = true;
+    }
 @endphp
 <!DOCTYPE html>
 <html>
@@ -64,9 +69,9 @@
             <!-- Logo -->
             <a href="{{ url('/dashboard', []) }}" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><b>SPP</b></span>
+                <span class="logo-mini"><img src="{{ asset('/assets/img/logo.png') }}" alt="logo" width="150"></span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>SPP SMK</b>DIPONEGORO</span>
+                <img src="{{ asset('/assets/img/logo.png') }}" alt="logo" width="175" class="logo-lg">
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top">
@@ -82,7 +87,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <img src="{{ asset('/newassets') }}/dist/img/user2-160x160.jpg" class="user-image"
                                     alt="User Image">
-                                <span class="hidden-xs">{{ $userAuth->name }}</span>
+                                <span class="hidden-xs">{{ $isSiswa ? $userAuth->nama : $userAuth->name }}</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
@@ -91,13 +96,16 @@
                                         alt="User Image">
 
                                     <p>
-                                        {{ $userAuth->name }} - {{ $userAuth->role }}
+                                        {{ $isSiswa ? $userAuth->nama : $userAuth->name }} - {{ $isSiswa ? 'Siswa' : $userAuth->role }}
                                     </p>
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-right">
-                                        <form action="{{ route('logout', []) }}" method="post">
+                                        @php
+                                            $logoutRoute = $isSiswa ? 'logout-siswa' : 'logout';
+                                        @endphp
+                                        <form action="{{ route($logoutRoute, []) }}" method="post">
                                             @csrf
                                             <button type="submit" class="btn btn-default btn-flat">Sign out</button>
                                         </form>
@@ -124,7 +132,7 @@
                             alt="User Image">
                     </div>
                     <div class="pull-left info">
-                        <p>{{ $userAuth->name }}</p>
+                        <p>{{ $isSiswa ? $userAuth->nama : $userAuth->name }}</p>
                     </div>
                 </div>
                 <ul class="sidebar-menu" data-widget="tree">

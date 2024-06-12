@@ -34,7 +34,7 @@
     {{-- <link rel="stylesheet" href="{{ asset('/assets/css/toastr.css') }}"> --}}
 
     {{-- Snackbar --}}
-    <link rel="stylesheet" href="{{ asset('/assets/css//snackbar.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/snackbar.min.css') }}">
     <script src="{{ asset('/assets/js/snackbar.min.js') }}"></script>
 
     {{-- Costume Style --}}

@@ -1,95 +1,280 @@
-@extends('layouts.auth')
-@section('title', 'Login Siswa')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
-    <!-- Main content -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="header bg-gradient-primary py-7 py-lg-8 pt-lg-9">
-            <div class="container">
-                <div class="header-body text-center mb-7">
-                    <div class="row justify-content-center">
-                        <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-                            <h1 class="text-white">Welcome!</h1>
-                            <p class="text-lead text-white">Use these awesome forms to login or create new account for free.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="separator separator-bottom separator-skew zindex-100">
-                <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-                </svg>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sistem SPP SMK Diponegoro | Login Siswa</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #217170;
+            font-family: Lato, Helvetica, Arial, sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        #navbar {
+            background: #217170;
+            color: rgb(13, 26, 38);
+        }
+
+        #navbar .nav-link:hover {
+            color: #000;
+        }
+
+        .menuIcon {
+            cursor: pointer;
+            display: block;
+            position: fixed;
+            right: 15px;
+            top: 20px;
+            height: 23px;
+            width: 27px;
+            z-index: 12;
+        }
+
+        .icon-bars {
+            background: rgb(13, 26, 38);
+            height: 2px;
+            width: 20px;
+            position: absolute;
+            left: 1px;
+            top: 45%;
+            transition: 0.4s;
+        }
+
+        .icon-bars::before,
+        .icon-bars::after {
+            content: '';
+            background: rgb(13, 26, 38);
+            position: absolute;
+            height: 2px;
+            width: 20px;
+            transition: 0.4s;
+        }
+
+        .icon-bars::before {
+            top: -8px;
+        }
+
+        .icon-bars::after {
+            top: 8px;
+        }
+
+        .menuIcon.toggle .icon-bars {
+            transform: translate3d(0, 5px, 0) rotate(135deg);
+        }
+
+        .menuIcon.toggle .icon-bars::before {
+            top: 0;
+            opacity: 0;
+        }
+
+        .menuIcon.toggle .icon-bars::after {
+            top: 0;
+            transform: translate3d(0, -10px, 0) rotate(-270deg);
+        }
+
+        .overlay-menu {
+            background: lightblue;
+            color: rgb(13, 26, 38);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translateX(-100%);
+            width: 100vw;
+            height: 100vh;
+            transition: transform 0.2s ease-out;
+        }
+
+        .overlay-menu ul,
+        .overlay-menu li {
+            display: block;
+        }
+
+        .overlay-menu li a {
+            font-size: 1.8em;
+            letter-spacing: 4px;
+            padding: 10px 0;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .overlay-menu li a:hover,
+        .overlay-menu li a:active {
+            color: rgb(28, 121, 184);
+        }
+    </style>
+
+    <link rel="stylesheet" href="{{ asset('/assets/css/snackbar.min.css') }}">
+    <script src="{{ asset('/assets/js/snackbar.min.js') }}"></script>
+</head>
+
+<body>
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url('/') }}">
+                <img src="{{ asset('/assets/img/logo.png') }}" alt="logo" width="200">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/') }}">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">Login</a>
+                    </li>
+                </ul>
             </div>
         </div>
-        <!-- Page content -->
-        <div class="container mt--8 pb-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-5 col-md-7">
-                    <div class="card bg-secondary border-0 mb-0">
-                        <div class="card-body px-lg-5 py-lg-5">
-                            <div class="text-center text-muted mb-4">
-                                <small>Sign in with credentials</small>
-                            </div>
-                            <form role="form" action="{{ route('login-siswa.store') }}" method="POST">
-                                @csrf
+    </nav>
 
-                                <div class="form-group mb-3">
-                                    <div class="input-group input-group-merge input-group-alternative">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                        </div>
-                                        <input class="form-control" name="nisn" placeholder="NISN" type="number"
-                                            value="{{ old('nisn') }}" required>
-                                    </div>
-                                    @error('nisn')
-                                        <div class="invalid-feedback d-block">*{{ $message }} <i
-                                                class="fas fa-arrow-up"></i></div>
-                                    @enderror
-                                </div>
+    <div class="container" style="margin-top: 11.8rem">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-5">
+                <img src="{{ asset('/assets/img/logo.png') }}" alt="logo" class="img-fluid">
 
-                                <div class="form-group">
-                                    <div class="input-group input-group-merge input-group-alternative">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
-                                        </div>
-                                        <input class="form-control" name="nis" placeholder="NIS" type="number"
-                                            value="{{ old('nis') }}" id="nis" required>
-                                        <div class="input-group-prepend">
-                                            <button type="button" onclick="seePassword(this)" class="input-group-text"
-                                                id="seePass"><i class="fas fa-eye"></i></button>
-                                        </div>
-                                    </div>
-                                    @error('nis')
-                                        <div class="invalid-feedback d-block">*{{ $message }} <i
-                                                class="fas fa-arrow-up"></i></div>
-                                    @enderror
-                                </div>
-
-                                <div class="custom-control custom-control-alternative custom-checkbox">
-                                    <input class="custom-control-input" name="remember" id="customCheckLogin"
-                                        type="checkbox">
-                                    <label class="custom-control-label" for="customCheckLogin">
-                                        <span class="text-muted">Remember me</span>
-                                    </label>
-                                </div>
-
-                                <div class="flex items-center justify-end mt-4">
-                                    <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
-                                    Login Petugas
-                                    </a>
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary my-4">Sign in</button>
-                                </div>
-                            </form>
+                <div class="text-center text-white mt-4">
+                    <h3 class="text-lead text-white">Aplikasi <br> SPP SMK Diponegoro
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-7">
+                <div class="card bg-white border-0 mb-0">
+                    <div class="card-body px-lg-5 py-lg-5">
+                        <div class="text-center text-muted mb-4">
+                            <small>Sign in with credentials</small>
                         </div>
+
+                        <form role="form" action="{{ route('login-siswa.store') }}" method="POST">
+                            @csrf
+
+                            <div class="form-group">
+                                <div class="input-group input-group-merge input-group-alternative">
+                                    <input class="form-control" name="nis" placeholder="NIS" type="number"
+                                        value="{{ old('nis') }}" id="nis" required>
+                                </div>
+                                @error('nis')
+                                    <div class="text-danger d-block">*{{ $message }} <i class="fas fa-arrow-up"></i>
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-group input-group-merge input-group-alternative">
+                                    <input class="form-control" name="password" placeholder="Password" type="password"
+                                        value="{{ old('password') }}" id="password" required>
+                                </div>
+                                @error('password')
+                                    <div class="text-danger d-block">*{{ $message }} <i class="fas fa-arrow-up"></i>
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="custom-control custom-control-alternative custom-checkbox">
+                                <input class="custom-control-input" name="remember" id="customCheckLogin"
+                                    type="checkbox">
+                                <label class="custom-control-label" for="customCheckLogin">
+                                    <span class="text-muted">Remember me</span>
+                                </label>
+                            </div>
+
+                            <div class="flex items-center justify-end mt-4">
+                                <a class="underline text-sm text-gray-600 hover:text-gray-900"
+                                    href="{{ route('login') }}">
+                                    Login Petugas
+                                </a>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary my-4">Sign in</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
+
+    <div class="menuIcon">
+        <span class="icon icon-bars"></span>
+        <span class="icon icon-bars overlay"></span>
+    </div>
+
+    <div class="overlay-menu">
+        <ul class="menu">
+            <li><a href="{{ url('/') }}">Beranda</a></li>
+            <li><a href="{{ route('login') }}">Login</a></li>
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Navigation
+        // Responsive Toggle Navigation =============================================
+        let menuIcon = document.querySelector('.menuIcon');
+        let nav = document.querySelector('.overlay-menu');
+
+        menuIcon.addEventListener('click', () => {
+            if (nav.style.transform != 'translateX(0%)') {
+                nav.style.transform = 'translateX(0%)';
+                nav.style.transition = 'transform 0.2s ease-out';
+            } else {
+                nav.style.transform = 'translateX(-100%)';
+                nav.style.transition = 'transform 0.2s ease-out';
+            }
+        });
+
+        // Toggle Menu Icon ========================================
+        let toggleIcon = document.querySelector('.menuIcon');
+
+        toggleIcon.addEventListener('click', () => {
+            if (toggleIcon.className != 'menuIcon toggle') {
+                toggleIcon.className += ' toggle';
+            } else {
+                toggleIcon.className = 'menuIcon';
+            }
+        });
+    </script>
+    <script>
+        @if (Session::has('success'))
+            Snackbar.show({
+            text: "{{ session('success') }}",
+            backgroundColor: '#28a745',
+            actionTextColor: '#212529',
+        })
+        @elseif (Session::has('error'))
+            Snackbar.show({
+            text: "{{ session('error') }}",
+            backgroundColor: '#dc3545',
+            actionTextColor: '#212529',
+        })
+        @elseif (Session::has('info'))
+            Snackbar.show({
+            text: "{{ session('info') }}",
+            backgroundColor: '#17a2b8',
+            actionTextColor: '#212529',
+            })
+        @endif;
+    </script>
+</body>
+
+</html>

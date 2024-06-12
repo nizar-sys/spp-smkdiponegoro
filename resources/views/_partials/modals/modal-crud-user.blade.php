@@ -20,7 +20,7 @@
                                     placeholder="Nama pengguna" value="{{ old('name', 'sadsdasdas') }}" name="name">
 
                                 @error('name')
-                                    <div class="d-block invalid-feedback">{{ $message }}</div>
+                                    <div class="d-block text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -32,7 +32,7 @@
                                     name="email">
 
                                 @error('email')
-                                    <div class="d-block invalid-feedback">{{ $message }}</div>
+                                    <div class="d-block text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -52,9 +52,9 @@
                                             {{ $role }}</option>
                                     @endforeach
                                 </select>
-    
+
                                 @error('role')
-                                    <div class="d-block invalid-feedback">{{ $message }}</div>
+                                    <div class="d-block text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                                     placeholder="Katasandi pengguna" name="password">
 
                                 @error('password')
-                                    <div class="d-block invalid-feedback">{{ $message }}</div>
+                                    <div class="d-block text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -80,7 +80,7 @@
                                     name="confirmation_password">
 
                                 @error('confirmation_password')
-                                    <div class="d-block invalid-feedback">{{ $message }}</div>
+                                    <div class="d-block text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                             name="avatar">
 
                         @error('avatar')
-                            <div class="d-block invalid-feedback">{{ $message }}</div>
+                            <div class="d-block text-danger">{{ $message }}</div>
                         @enderror
                     </div>
                 </form>

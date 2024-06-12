@@ -11,7 +11,10 @@ use App\Models\Siswa;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Termwind\Components\Dd;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class SppController extends Controller
 {
@@ -31,11 +34,6 @@ class SppController extends Controller
         // 'desember',
     ];
 
-    public function __construct()
-    {
-        $this->middleware(['roles:admin'])->except(['index', 'show']);
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -43,6 +41,10 @@ class SppController extends Controller
      */
     public function index(Request $request)
     {
+        if (!Auth::check() && !Session::has('nis')) {
+            return redirect(route('login'))->with('error', 'Silahkan login terlebih dahulu.');
+        }
+
         $monthYear = $request->input('monthYear');
         $yearSelected = $monthYear ? explode('-', $monthYear)[0] : date('Y');
 
@@ -54,7 +56,9 @@ class SppController extends Controller
             ->groupBy('siswa.nama');
 
         // Get the list of students
-        $students = Siswa::get();
+        $students = Siswa::when(Session::has('nis'), function ($query) {
+            return $query->where('nis', Session::get('nis'));
+        })->get();
 
         // Prepare the months array
         $months = $monthYear ? [TranslateMonth::monthCode(explode('-', $monthYear)[1])] : [TranslateMonth::monthCode(date('m'))];
@@ -76,7 +80,6 @@ class SppController extends Controller
                 }
             }
         }
-
 
         return view('dashboard.spps.index', compact('spps', 'months', 'sppsByMonth', 'students', 'yearSelected'));
     }
@@ -226,11 +229,72 @@ class SppController extends Controller
             'created_at' => now(),
         ];
 
+        if ($request->hasFile('bukti_pembayaran')) {
+            $fileName = time() . '.' . $request->bukti_pembayaran->extension();
+            $payloadPembayaran['bukti_pembayaran'] = $fileName;
+
+            // move file
+            $request->bukti_pembayaran->move(public_path('uploads/images'), $fileName);
+        }
+
         $spp = Spp::create($payloadSpp);
         $spp->pembayarans()->updateOrCreate([
             'spp_id' => $spp->id,
         ], $payloadPembayaran);
 
         return redirect()->back()->with('success', 'Spp berhasil dibayar');
+    }
+
+    public function kwitansi($kd_transaksi)
+    {
+        $pembayaran = Pembayaran::where('kd_transaksi', $kd_transaksi)->first()->load('siswa', 'spp');
+        $spp = $pembayaran->spp;
+
+        $pdf = Pdf::loadView('dashboard.spps.kwitansi', compact('pembayaran', 'spp'));
+        return $pdf->stream('kwitansi-pembayaran-spp' . $kd_transaksi . '.pdf');
+    }
+
+    public function laporanSpp(Request $request)
+    {
+        $monthYear = $request->input('monthYear');
+        $yearSelected = $monthYear ? explode('-', $monthYear)[0] : date('Y');
+        $monthSelected = $monthYear ? TranslateMonth::monthCode(explode('-', $monthYear)[1]) : TranslateMonth::monthCode(date('m'));
+
+        // Fetch SPP data for the current year and group by student name
+        $spps = Spp::with('onePembayaran')
+            ->whereTahun($yearSelected)
+            ->orderByDesc('id')
+            ->get()
+            ->groupBy('siswa.nama');
+
+        // Get the list of students
+        $students = Siswa::whereHas('pembayaran', function ($query) use ($yearSelected, $monthSelected) {
+            $query->whereNotNull('kd_transaksi')->where('tahun_dibayar', $yearSelected)
+                ->where('bulan_dibayar', $monthSelected);
+        })->get();
+
+        // Prepare the months array
+        $months = $monthYear ? [TranslateMonth::monthCode(explode('-', $monthYear)[1])] : [TranslateMonth::monthCode(date('m'))];
+
+        // Initialize the sppsByMonth array
+        $sppsByMonth = [];
+        foreach ($spps as $namaSiswa => $dataSpp) {
+            foreach ($months as $month) {
+                $sppBulanIni = $dataSpp->firstWhere('bulan', $month);
+                $sppsByMonth[$namaSiswa][$month] = $sppBulanIni ? $sppBulanIni->status : null;
+            }
+        }
+
+        // Fill in missing payment data with a button
+        foreach ($students as $student) {
+            foreach ($months as $month) {
+                if (!isset($sppsByMonth[$student->nama][$month])) {
+                    $sppsByMonth[$student->nama][$month] = '<div class="text-dark">' . ucfirst($month) . ' ' . $yearSelected . '</div>';
+                }
+            }
+        }
+
+
+        return view('dashboard.spps.laporan-spp', compact('spps', 'months', 'sppsByMonth', 'students', 'yearSelected'));
     }
 }

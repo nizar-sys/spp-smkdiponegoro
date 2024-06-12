@@ -20,13 +20,16 @@ class StudentController extends Controller
     public function login(RequestLoginSiswa $request)
     {
         $validatedPayload = $request->validated();
+        $user = Siswa::where('nis', $validatedPayload['nis'])->first();
 
-        Session::put('nisn', $validatedPayload['nisn']);
+        if (!$user || !password_verify($validatedPayload['password'], $user->password)) {
+            return redirect(route('login-siswa'))->with('error', 'NIS atau Password salah');
+        }
+
         Session::put('nis', $validatedPayload['nis']);
         Session::put('level', 'siswa');
         Session::put('login', true);
 
-        $user = Siswa::where('nisn', $validatedPayload['nisn'])->first();
         Session::put('user', $user);
 
         return redirect(route('dashboard-siswa'))->with('success', 'Selamat Datang ' . $user->nama);
@@ -40,16 +43,20 @@ class StudentController extends Controller
 
     public function dashboard()
     {
-        $user = Siswa::where('nisn', Session::get('nisn'))->first();
+        $user = Siswa::where('nis', Session::get('nis'))->first();
         return view('dashboard.index', compact('user'));
     }
 
-    public function history()
+    public function history(Request $request)
     {
-        $spps = Spp::orderByDesc('id')->whereTahun(date('Y'))->where('siswa_id', Session::get('user')->id)->get()->groupBy('siswa.nama');
+        $yearSelected = $request->filled('year') ? $request->year : date('Y');
+
+        $spps = Spp::orderByDesc('id')->whereTahun($yearSelected)->get()->groupBy('siswa.nama');
 
         $months = $this->months;
-        $students = Siswa::where('nis', Session::get('user')->nis)->get();
+        $students = Siswa::when(Session::has('nis'), function ($query) {
+            return $query->where('nis', Session::get('nis'));
+        })->get();
 
         $sppsByMonth = [];
         foreach ($spps as $namaSiswa => $dataSpp) {
@@ -60,15 +67,15 @@ class StudentController extends Controller
         }
 
         // jika ada data sppsByMonth null maka diisi dengan button bayar dengan melooping data $students
-        foreach($students as $student){
-            foreach($months as $month){
-                if(isset($sppsByMonth[$student->nama])&&$sppsByMonth[$student->nama][$month] == null){
+        foreach ($students as $student) {
+            foreach ($months as $month) {
+                if (isset($sppsByMonth[$student->nama]) && $sppsByMonth[$student->nama][$month] == null) {
                     $sppsByMonth[$student->nama][$month] = '<div class="text-danger">Belum lunas</div>';
                 }
             }
         }
 
 
-        return view('dashboard.spps.index', compact('spps', 'months', 'sppsByMonth', 'students'));
+        return view('dashboard.spps.history_siswa', compact('spps', 'months', 'sppsByMonth', 'students', 'yearSelected'));
     }
 }

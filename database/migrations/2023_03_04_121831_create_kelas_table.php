@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('kompetensi_keahlian');
             $table->string('kode_kelas');
             $table->string('nominal_spp');
+            $table->string('tahun_ajaran');
             $table->timestamps();
         });
     }

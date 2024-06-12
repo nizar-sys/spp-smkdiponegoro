@@ -80,7 +80,7 @@
                                             value="{{ $user->name }}">
 
                                         @error('name')
-                                            <div class="invalid-feedback d-block">
+                                            <div class="text-danger d-block">
                                                 {{ $message }}
                                             </div>
                                         @enderror
@@ -96,7 +96,7 @@
                                         @enderror"
                                             placeholder="Email@example" value="{{ $user->email }}" name="email">
                                         @error('email')
-                                            <div class="invalid-feedback d-block">
+                                            <div class="text-danger d-block">
                                                 {{ $message }}
                                             </div>
                                         @enderror
@@ -110,11 +110,11 @@
                                         <label for="password">Katasandi Baru</label>
                                         <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
                                             placeholder="Katasandi Akun" name="password">
-    
+
                                         @error('password')
-                                            <div class="d-block invalid-feedback">{{ $message }}</div>
+                                            <div class="d-block text-danger">{{ $message }}</div>
                                         @enderror
-                                            <div class="d-block invalid-feedback">Jangan isi kolom jika tidak ingin merubah katasandi akun.</div>
+                                            <div class="d-block text-danger">Jangan isi kolom jika tidak ingin merubah katasandi akun.</div>
                                     </div>
                                 </div>
                             </div>

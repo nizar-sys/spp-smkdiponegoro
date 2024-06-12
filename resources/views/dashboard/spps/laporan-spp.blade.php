@@ -1,101 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Data Spp')
+@section('title', 'Laporan Data Spp')
 
-@section('title-header', 'Data Spp')
+@section('title-header', 'Laporan Data Spp')
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Data Spp</li>
+    <li class="breadcrumb-item active">Laporan Data Spp</li>
 @endsection
 
 @section('content')
-
-    <div class="modal fade" id="modal-form-payment" tabindex="-1" role="dialog" aria-labelledby="modal-form-payment"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-            <div class="modal-content">
-                <form role="form text-left" method="post" action="{{ route('data-spp.payment') }}"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body p-0">
-                        <input type="hidden" name="siswa_id" value="">
-
-                        <label for="nominal">Nominal SPP</label>
-                        <div class="form-group input-group mb-3">
-                            <div class="input-group-addon">
-                                <span class="input-group-text" id="basic-addon1">Rp.</span>
-                            </div>
-                            <input type="text" class="form-control @error('nominal') is-invalid @enderror" id="nominal"
-                                placeholder="Nominal SPP" value="{{ old('nominal') }}" name="nominal" readonly>
-
-                            @error('nominal')
-                                <div class="d-block text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="form-group mb-3">
-                                    <label for="bulan_dibayar">Bulan Dibayar SPP</label>
-                                    <input type="text" class="form-control @error('bulan_dibayar') is-invalid @enderror"
-                                        id="bulan_dibayar" placeholder="Bulan Dibayar SPP"
-                                        value="{{ old('bulan_dibayar') }}" name="bulan_dibayar" readonly>
-
-                                    @error('bulan_dibayar')
-                                        <div class="d-block text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="form-group mb-3">
-                                    <label for="tahun_dibayar">Tahun Dibayar SPP</label>
-                                    <input type="text" class="form-control @error('tahun_dibayar') is-invalid @enderror"
-                                        id="tahun_dibayar" placeholder="Tahun Dibayar SPP"
-                                        value="{{ old('tahun_dibayar', $yearSelected) }}" name="tahun_dibayar" readonly>
-
-                                    @error('tahun_dibayar')
-                                        <div class="d-block text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <label for="jumlah_bayar">Jumlah Bayar SPP</label>
-                        <div class="form-group input-group mb-3">
-                            <div class="input-group-addon">
-                                <span class="input-group-text" id="basic-addon1">Rp.</span>
-                            </div>
-                            <input type="number" class="form-control @error('jumlah_bayar') is-invalid @enderror"
-                                id="jumlah_bayar" placeholder="Jumlah Bayar SPP" value="{{ old('jumlah_bayar') }}"
-                                name="jumlah_bayar" required>
-
-                            @error('jumlah_bayar')
-                                <div class="d-block text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <label for="bukti_pembayaran">Bukti Pembayaran</label>
-                        <div class="form-group input-group mb-3">
-                            <div class="input-group-addon">
-                                <span class="input-group-text" id="basic-addon1"><i class="fa fa-camera"></i></span>
-                            </div>
-                            <input type="file" class="form-control @error('bukti_pembayaran') is-invalid @enderror"
-                                id="bukti_pembayaran" placeholder="Bukti Pembayaran" value="{{ old('bukti_pembayaran') }}"
-                                name="bukti_pembayaran" required>
-
-                            @error('bukti_pembayaran')
-                                <div class="d-block text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="text-center">
-                            <button type="submit"
-                                class="btn btn-round btn-primary text-white btn-lg w-100 mt-4 mb-0">Bayar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="monthYearModal" tabindex="-1" role="dialog" aria-labelledby="monthYearModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -127,12 +38,12 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">Data Spp Tahun {{ $yearSelected }}</h3>
+                    <h3 class="box-title">Laporan Data Spp Tahun {{ $yearSelected }}</h3>
                     <div class="pull-right">
                         <button class="btn btn-sm btn-info" data-toggle="modal"
                             data-target="#monthYearModal">Filter</button>
                         @if (request()->has('monthYear'))
-                            <a href="{{ route('data-spp.index') }}" class="btn btn-sm btn-danger">Reset</a>
+                            <a href="{{ route('laporan-spp.index') }}" class="btn btn-sm btn-danger">Reset</a>
                         @endif
                     </div>
                 </div>
@@ -229,13 +140,7 @@
                                         <td>
                                             {!! $isLunas
                                                 ? '<a target="__blank" href="'.route('data-spp.kwitansi', ['kd_transaksi' => $transactionCode]).'" class="btn-sm btn-primary">Unduh Kwintasi</a>'
-                                                : '<button class="btn btn-sm btn-primary btn-pay-spp" data-id="' .
-                                                    $student->id .
-                                                    '" data-month="' .
-                                                    $month .
-                                                    '" data-nomimal="' .
-                                                    $student->kelas->nominal_spp .
-                                                    '">Bayar</button>' !!}
+                                                : '' !!}
                                         </td>
                                     @endforeach
                                 </tr>
@@ -335,7 +240,7 @@
                 dom: "Bfrtip",
                 buttons: [{
                     extend: "pdfHtml5",
-                    title: "Data SPP Tahun " + new Date().getFullYear(),
+                    title: "Laporan Data SPP Tahun " + new Date().getFullYear(),
                     text: '<i class="fas fa-file-pdf"></i> PDF',
                     className: "btn btn-sm btn-danger",
                     // set alignment option

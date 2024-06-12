@@ -22,7 +22,7 @@ use App\Http\Controllers\SppController;
 */
 
 # ------ Unauthenticated routes ------ #
-Route::get('/', [AuthenticatedSessionController::class, 'create']);
+Route::get('/', [RouteController::class, 'home']);
 require __DIR__.'/auth.php';
 
 
@@ -44,9 +44,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function() {
     Route::resource('users', UserController::class);
     Route::resource('classes', KelasController::class);
     Route::resource('students', SiswaController::class);
-
-    Route::get('/data-spp/pembayaran/{sppId}', [SppController::class, 'pembayaranView'])->name('data-spp.pembayaran');
-    Route::post('/data-spp/pembayaran/{sppId}', [SppController::class, 'storePembayaran'])->name('data-spp.pembayaran-store');
-    Route::post('/data-spp/payment', [SppController::class, 'payment'])->name('data-spp.payment');
-    Route::resource('data-spp', SppController::class);
 });
+
+Route::get('/data-spp/pembayaran/{sppId}', [SppController::class, 'pembayaranView'])->name('data-spp.pembayaran');
+Route::post('/data-spp/pembayaran/{sppId}', [SppController::class, 'storePembayaran'])->name('data-spp.pembayaran-store');
+Route::post('/data-spp/payment', [SppController::class, 'payment'])->name('data-spp.payment');
+Route::get('/data-spp/{kd_transaksi}/kwitansi', [SppController::class, 'kwitansi'])->name('data-spp.kwitansi');
+Route::get('/data-spp/laporan-spp', [SppController::class, 'laporanSpp'])->name('laporan-spp.index');
+Route::resource('data-spp', SppController::class);

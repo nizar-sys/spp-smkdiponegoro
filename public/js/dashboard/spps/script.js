@@ -34,11 +34,11 @@ function paySpp(id, month) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Jumlah bayar tidak sesuai!"
+        text: "Jumlah bayar tidak sesuaiss!"
       });
-    } else {
-      $("#modal-form-payment form").submit();
     }
+
+    $('#form-payment').submit();
   });
   $("#modal-form-payment").on("hidden.bs.modal", function (e) {
     $('#modal-form-payment input[name="siswa_id"]').val("");

@@ -24,8 +24,8 @@ class RequestLoginSiswa extends FormRequest
     public function rules()
     {
         return [
-            'nisn' => 'required|numeric|exists:siswas,nisn',
             'nis' => 'required|numeric|exists:siswas,nis',
+            'password' => 'required',
         ];
     }
 
@@ -38,6 +38,7 @@ class RequestLoginSiswa extends FormRequest
             'nis.required' => 'NIS tidak boleh kosong',
             'nis.numeric' => 'NIS harus berupa angka',
             'nis.exists' => 'NIS Tidak terdaftar',
+            'password.required' => 'Password tidak boleh kosong',
         ];
     }
 }

@@ -22,8 +22,7 @@ class KelasController extends Controller
      */
     public function index()
     {
-        $classes = Kelas::orderByDesc('id');
-        $classes = $classes->paginate(50);
+        $classes = Kelas::orderByDesc('id')->get();
 
         return view('dashboard.classes.index', compact('classes'));
     }

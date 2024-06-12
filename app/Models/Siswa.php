@@ -11,12 +11,14 @@ class Siswa extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nisn',
         'nis',
         'nama',
         'kelas_id',
         'alamat',
         'no_hp',
+        'tempat_tanggal_lahir',
+        'jenis_kelamin',
+        'password',
     ];
 
     protected $appends = [
@@ -38,5 +40,10 @@ class Siswa extends Model
     public function spps()
     {
         return $this->hasMany(Spp::class, 'siswa_id', 'id');
+    }
+
+    public function pembayaran()
+    {
+        return $this->hasMany(Pembayaran::class, 'siswa_id', 'id');
     }
 }

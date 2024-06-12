@@ -3,68 +3,76 @@
 
 @section('title-header', 'Data Kelas')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
     <li class="breadcrumb-item active">Data Kelas</li>
-@endsection
-
-@section('action_btn')
-    <a href="{{ route('classes.create') }}" class="btn btn-default">Tambah Data</a>
 @endsection
 
 @section('content')
     <div class="row">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header bg-transparent border-0 text-dark">
-                    <h2 class="card-title h3">Data Kelas</h2>
-                    <div class="table-responsive">
-                        <table class="table table-flush table-hover">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Kelas tingkatan</th>
-                                    <th>Kode Kelas</th>
-                                    <th>kompetensi keahlian</th>
-                                    <th>Nominal SPP</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($classes as $class)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $class->kelas }}</td>
-                                        <td>{{ $class->kompetensi_keahlian }}</td>
-                                        <td>{{ $class->kode_kelas }}</td>
-                                        <td>@currency($class->nominal_spp)</td>
-                                        <td class="d-flex jutify-content-center">
-                                            <a href="{{ route('classes.edit', $class->id) }}"
-                                                class="btn btn-sm btn-warning"><i class="fas fa-pencil-alt"></i></a>
-                                            <form id="delete-form-{{ $class->id }}"
-                                                action="{{ route('classes.destroy', $class->id) }}" class="d-none"
-                                                method="post">
-                                                @csrf
-                                                @method('DELETE')
-                                            </form>
-                                            <button onclick="deleteForm('{{ $class->id }}')"
-                                                class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="3">Tidak ada data</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th colspan="4">
-                                        {{ $classes->links() }}
-                                    </th>
-                                </tr>
-                            </tfoot>
-                        </table>
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Data Kelas</h3>
+                    <div class="pull-right">
+                        <a href="{{ route('classes.create') }}" class="btn btn-primary">Tambah Data</a>
                     </div>
+                </div>
+                <div class="box-body">
+                    <table class="table table-bordered table-hover" id="table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kelas tingkatan</th>
+                                <th>Kode Kelas</th>
+                                <th>kompetensi keahlian</th>
+                                <th>Nominal SPP</th>
+                                <th>Tahun Ajaran</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($classes as $class)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $class->kelas }}</td>
+                                    <td>{{ $class->kompetensi_keahlian }}</td>
+                                    <td>{{ $class->kode_kelas }}</td>
+                                    <td>@currency($class->nominal_spp)</td>
+                                    <td>{{ $class->tahun_ajaran }}</td>
+                                    <td width="75">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default">Aksi</button>
+                                            <button type="button" class="btn btn-default dropdown-toggle"
+                                                data-toggle="dropdown">
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li>
+                                                    <a href="{{ route('classes.edit', $class->id) }}">
+                                                        Edit
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <form id="delete-form-{{ $class->id }}"
+                                                        action="{{ route('classes.destroy', $class->id) }}" class="d-none"
+                                                        method="post">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                    </form>
+                                                    <a href="javascript:void(0)" onclick="deleteForm({{ $class->id }})">
+                                                        Hapus
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3">Tidak ada data</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -88,5 +96,22 @@
                 }
             })
         }
+
+        $(document).ready(() => {
+            $("#table").DataTable({
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Cari Data",
+                    lengthMenu: "Menampilkan _MENU_ data",
+                    zeroRecords: "Data tidak ditemukan",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+                    infoFiltered: "(disaring dari _MAX_ data)",
+                    paginate: {
+                        previous: '<i class="fa fa-angle-left"></i>',
+                        next: "<i class='fa fa-angle-right'></i>",
+                    },
+                },
+            });
+        });
     </script>
 @endsection

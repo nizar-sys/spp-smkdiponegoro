@@ -25,7 +25,8 @@ return new class extends Migration
             $table->date('tgl_bayar');
             $table->string('bulan_dibayar');
             $table->string('tahun_dibayar');
-            $table->integer('jumlah_bayar');
+            $table->string('jumlah_bayar');
+            $table->string('bukti_pembayaran')->nullable();
             $table->timestamps();
         });
     }

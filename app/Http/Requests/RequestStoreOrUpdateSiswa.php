@@ -24,17 +24,18 @@ class RequestStoreOrUpdateSiswa extends FormRequest
     public function rules()
     {
         $rules = [
-            'nisn' => "required|numeric",
             'nis' => "required|numeric",
             'nama' => "required",
             'kelas_id' => 'required|exists:kelas,id',
             'alamat' => 'required',
             'no_hp' => 'required|numeric',
+            'jenis_kelamin' => 'required',
+            'tempat_tanggal_lahir' => 'required',
         ];
 
         if ($this->isMethod('POST')) {
-            $rules['nisn'] .= '|unique:siswas,nisn';
             $rules['nis'] .= '|unique:siswas,nis';
+            $rules['password'] = 'required';
         }
 
         return $rules;
@@ -43,9 +44,6 @@ class RequestStoreOrUpdateSiswa extends FormRequest
     public function messages()
     {
         return [
-            'nisn.required' => 'Kolom NISN harus diisi.',
-            'nisn.numeric' => 'Kolom NISN harus berupa angka.',
-            'nisn.unique' => 'NISN sudah terdaftar di database.',
 
             'nis.required' => 'Kolom NIS harus diisi.',
             'nis.numeric' => 'Kolom NIS harus berupa angka.',
@@ -60,6 +58,10 @@ class RequestStoreOrUpdateSiswa extends FormRequest
 
             'no_hp.required' => 'Kolom No. HP harus diisi.',
             'no_hp.numeric' => 'Kolom No. HP harus berupa angka.',
+
+            'jenis_kelamin.required' => 'Kolom Jenis Kelamin harus diisi.',
+            'tempat_tanggal_lahir.required' => 'Kolom Tempat Tanggal Lahir harus diisi.',
+            'password.required' => 'Kolom Password harus diisi.'
         ];
     }
 

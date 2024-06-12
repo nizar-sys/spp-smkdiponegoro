@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('siswa_id');
             $table->foreign('siswa_id')->references('id')->on('siswas')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->integer('nominal');
+            $table->string('nominal');
             $table->integer('tanggal');
             $table->string('bulan');
             $table->string('tahun');

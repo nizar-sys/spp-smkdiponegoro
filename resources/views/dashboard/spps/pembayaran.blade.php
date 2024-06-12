@@ -30,7 +30,7 @@
                                     </select>
 
                                     @error('siswa_id')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                                         name="bulan_dibayar" disabled>
 
                                     @error('bulan_dibayar')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -57,7 +57,7 @@
                                         name="tahun_dibayar" disabled>
 
                                     @error('tahun_dibayar')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -72,7 +72,7 @@
                                         name="nominal" disabled>
 
                                     @error('nominal')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                                         name="jumlah_bayar">
 
                                     @error('jumlah_bayar')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>

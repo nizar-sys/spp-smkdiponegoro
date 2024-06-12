@@ -28,6 +28,7 @@ class RequestStoreOrUpdateKelas extends FormRequest
             'kompetensi_keahlian' => "required",
             'kode_kelas' => "required",
             'nominal_spp' => "required",
+            'tahun_ajaran' => 'required'
         ];
     }
 
@@ -37,7 +38,8 @@ class RequestStoreOrUpdateKelas extends FormRequest
             'kelas' => "Kelas",
             'kompetensi_keahlian' => "Kompetensi keahlian atau Jurusan",
             'kode_kelas' => "Kode Kelas",
-            'nominal_spp' => "Nominal SPP"
+            'nominal_spp' => "Nominal SPP",
+            'tahun_ajaran' => 'Tahun Ajaran'
         ];
     }
 
@@ -45,9 +47,10 @@ class RequestStoreOrUpdateKelas extends FormRequest
     {
         return [
             'kelas.required' => "Kelas atau Tingkatan wajib diisi.",
-            'kompetensi_keahlian' => "Kompetensi keahlian atau Jurusan wajib diisi.",
-            'kode_kelas' => "Kode Kelas wajib diisi.",
-            'nominal_spp' => "Nominal SPP wajib diisi."
+            'kompetensi_keahlian.required' => "Kompetensi keahlian atau Jurusan wajib diisi.",
+            'kode_kelas.required' => "Kode Kelas wajib diisi.",
+            'nominal_spp.required' => "Nominal SPP wajib diisi.",
+            'tahun_ajaran.required' => 'Tahun Ajaran wajib diisi.'
         ];
     }
 }

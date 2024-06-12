@@ -13,7 +13,8 @@ class Kelas extends Model
         'kelas',
         'kompetensi_keahlian',
         'kode_kelas',
-        'nominal_spp'
+        'nominal_spp',
+        'tahun_ajaran'
     ];
 
     public function siswa()

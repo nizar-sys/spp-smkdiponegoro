@@ -27,7 +27,7 @@ class RequestStoreOrUpdateUser extends FormRequest
             'name' => 'required|max:255',
             'username' => 'required|max:255|',
             'email' => 'required|email|',
-            'role' => 'required|in:admin,petugas',
+            'role' => 'required',
         ];
 
         if ($this->isMethod('POST')) {

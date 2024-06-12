@@ -35,7 +35,7 @@
                                     </select>
 
                                     @error('siswa_id')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -50,7 +50,7 @@
                                         name="nominal">
 
                                     @error('nominal')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -71,7 +71,7 @@
                                     </select>
 
                                     @error('tanggal')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                                     </select>
 
                                     @error('bulan')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -110,7 +110,7 @@
                                     </select>
 
                                     @error('tahun')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                        <div class="d-block text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>

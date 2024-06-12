@@ -23,8 +23,7 @@ class SiswaController extends Controller
      */
     public function index()
     {
-        $students = Siswa::orderByDesc('id');
-        $students = $students->paginate(50);
+        $students = Siswa::orderByDesc('id')->get();
 
         return view('dashboard.students.index', compact('students'));
     }
@@ -51,6 +50,8 @@ class SiswaController extends Controller
         $validated = $request->validated() + [
             'created_at' => now(),
         ];
+
+        $validated['password'] = Hash::make($validated['password']);
 
         $student = Siswa::create($validated);
 
@@ -96,6 +97,10 @@ class SiswaController extends Controller
         ];
 
         $student = Siswa::findOrFail($id);
+
+        if ($request->filled('password')) {
+            $validated['password'] = Hash::make($request->password);
+        }
 
         $student->update($validated);
 

@@ -67,5 +67,5 @@ Route::post('/login-siswa', [StudentController::class, 'login'])->name('login-si
 Route::middleware('authStudent')->group(function () {
     Route::get('/dashboard-siswa', [StudentController::class, 'dashboard'])->name('dashboard-siswa');
     Route::post('/logout-siswa', [StudentController::class, 'logout'])->name('logout-siswa');
-    Route::get('/history-pembayaran-spp', [StudentController::class, 'history'])->name('history-spp');
 });
+Route::get('/history-pembayaran-spp', [StudentController::class, 'history'])->name('history-spp');

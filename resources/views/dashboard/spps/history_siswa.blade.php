@@ -1,19 +1,18 @@
 @extends('layouts.app')
-@section('title', 'Data Spp')
+@section('title', 'History Pembayaran SPP')
 
-@section('title-header', 'Data Spp')
+@section('title-header', 'History Pembayaran SPP')
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Data Spp</li>
+    <li class="breadcrumb-item active">History Pembayaran SPP</li>
 @endsection
 
 @section('content')
 
-    <div class="modal fade" id="modal-form-payment" tabindex="-1" role="dialog" aria-labelledby="modal-form-payment"
+    {{-- <div class="modal fade" id="modal-form-payment" tabindex="-1" role="dialog" aria-labelledby="modal-form-payment"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-md" role="document">
             <div class="modal-content">
-                <form role="form text-left" method="post" action="{{ route('data-spp.payment') }}"
-                    enctype="multipart/form-data">
+                <form role="form text-left" method="post" action="{{ route('data-spp.payment') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body p-0">
                         <input type="hidden" name="siswa_id" value="">
@@ -24,7 +23,7 @@
                                 <span class="input-group-text" id="basic-addon1">Rp.</span>
                             </div>
                             <input type="text" class="form-control @error('nominal') is-invalid @enderror" id="nominal"
-                                placeholder="Nominal SPP" value="{{ old('nominal') }}" name="nominal" readonly>
+                                placeholder="Nominal SPP" value="{{ old('nominal', 400000) }}" name="nominal" readonly>
 
                             @error('nominal')
                                 <div class="d-block text-danger">{{ $message }}</div>
@@ -94,14 +93,14 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 
-    <div class="modal fade" id="monthYearModal" tabindex="-1" role="dialog" aria-labelledby="monthYearModalLabel"
+    <div class="modal fade" id="yearFilterModal" tabindex="-1" role="dialog" aria-labelledby="monthYearModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="monthYearModalLabel">Filter Bulan - Tahun</h5>
+                    <h5 class="modal-title" id="monthYearModalLabel">Filter Tahun</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -110,8 +109,8 @@
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="monthYear">Pilih Bulan - Tahun</label>
-                            <input type="month" class="form-control" id="monthYear" name="monthYear" required>
+                            <label for="year">Pilih Tahun</label>
+                            <input type="number" class="form-control" id="year" name="year" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -127,12 +126,12 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">Data Spp Tahun {{ $yearSelected }}</h3>
+                    <h3 class="box-title">History Pembayaran SPP Tahun {{ $yearSelected }}</h3>
                     <div class="pull-right">
                         <button class="btn btn-sm btn-info" data-toggle="modal"
-                            data-target="#monthYearModal">Filter</button>
-                        @if (request()->has('monthYear'))
-                            <a href="{{ route('data-spp.index') }}" class="btn btn-sm btn-danger">Reset</a>
+                            data-target="#yearFilterModal">Filter</button>
+                        @if (request()->has('year'))
+                            <a href="{{ route('history-spp') }}" class="btn btn-sm btn-danger">Reset</a>
                         @endif
                     </div>
                 </div>
@@ -143,105 +142,24 @@
                                 <th>Nama</th>
                                 <th>Nis</th>
                                 @foreach ($months as $month)
-                                    <th>Bulan</th>
-                                    <th>Jatuh Tempo</th>
-                                    <th>Jumlah</th>
-                                    <th>Tanggal Bayar</th>
-                                    <th>ID Transaksi</th>
-                                    <th>Bukti Pembayaran</th>
-                                    <th>Keterangan</th>
-                                    <th></th>
+                                    <th>{{ ucfirst($month) }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            @php
-                                use Carbon\Carbon;
-                                use App\Helpers\TranslateMonth;
-
-                                // Precompute due dates and labels
-                                $currentYear = $yearSelected;
-                                $dueDates = [];
-                                foreach ($months as $month) {
-                                    $dueDates[$month] = Carbon::parse(
-                                        '01-' . TranslateMonth::translate($month),
-                                    )->addDay(7);
-                                }
-                            @endphp
-
                             @forelse ($students as $student)
                                 <tr>
                                     <td>{{ $student->nama }}</td>
                                     <td>{{ $student->nis }}</td>
                                     @foreach ($months as $month)
-                                        @php
-                                            // Precompute values for the current month
-                                            $isLunas =
-                                                isset($sppsByMonth[$student->nama][$month]) &&
-                                                $sppsByMonth[$student->nama][$month] == 'lunas';
-                                            $spp = $student
-                                                ->spps()
-                                                ->whereBulan($month)
-                                                ->whereTahun($currentYear)
-                                                ->whereStatus('lunas')
-                                                ->first();
-                                            $paymentDate = $isLunas ? optional($spp->onePembayaran)->tgl_bayar : null;
-                                            $formattedDate = $paymentDate
-                                                ? Carbon::parse($paymentDate)->format('Y-m-d')
-                                                : '';
-
-                                            // Calculate due status
-                                            $dueDate = $dueDates[$month];
-                                            $isDue = !$isLunas && Carbon::now()->greaterThanOrEqualTo($dueDate);
-
-                                            // Transaction code (optional)
-                                            $transactionCode = $isLunas
-                                                ? optional($spp->onePembayaran)->kd_transaksi
-                                                : '';
-                                        @endphp
-                                        <td>{!! '<div class="text-dark">' . ucfirst($month) . ' ' . $currentYear . '</div>' !!}</td>
-                                        <td>{{ $dueDate->format('Y-m-d') }}</td>
-                                        <td>@currency($student->kelas->nominal_spp)</td>
-                                        <td>{!! $formattedDate !!}</td>
-                                        <td>{{ $transactionCode }}</td>
-                                        <td>
-                                            @if ($isLunas)
-                                                <a href="{{ asset('/uploads/images/' . optional($spp->onePembayaran)->bukti_pembayaran) }}"
-                                                    target="_blank">
-                                                    <img src="{{ asset('/uploads/images/' . optional($spp->onePembayaran)->bukti_pembayaran) }}"
-                                                        alt="Bukti Pembayaran" class="img-thumbnail" width="50">
-                                                </a>
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($isLunas)
-                                                <span class="badge bg-green">Lunas</span>
-                                            @else
-                                                @if ($isDue)
-                                                    <span class="badge bg-red">Jatuh Tempo</span>
-                                                @else
-                                                    <span class="badge bg-orange">Belum Bayar</span>
-                                                @endif
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {!! $isLunas
-                                                ? '<a target="__blank" href="'.route('data-spp.kwitansi', ['kd_transaksi' => $transactionCode]).'" class="btn-sm btn-primary">Unduh Kwintasi</a>'
-                                                : '<button class="btn btn-sm btn-primary btn-pay-spp" data-id="' .
-                                                    $student->id .
-                                                    '" data-month="' .
-                                                    $month .
-                                                    '" data-nomimal="' .
-                                                    $student->kelas->nominal_spp .
-                                                    '">Bayar</button>' !!}
-                                        </td>
+                                        <td>{!! isset($sppsByMonth[$student->nama])
+                                            ? $sppsByMonth[$student->nama][$month]
+                                            : '<div class="text-danger">Belum lunas</div>' !!}</td>
                                     @endforeach
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ 2 + count($months) * 6 }}">Tidak ada data</td>
+                                    <td colspan="{{ count($months) }}">Tidak ada data</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -253,8 +171,6 @@
 @endsection
 
 @section('script')
-    {{-- <script src="{{ mix('/js/dashboard/spps/script.js') }}"></script> --}}
-
     <script>
         function deleteForm(id) {
             Swal.fire({
@@ -272,13 +188,12 @@
             });
         }
 
-        function paySpp(id, month, nominal) {
+        function paySpp(id, month) {
             $("#modal-form-payment").modal("show");
             $('#modal-form-payment input[name="siswa_id"]').val(id);
             // simpan month dengan huruf kapital di awal untuk ditampilkan di modal
             const monthCapitalized = month.charAt(0).toUpperCase() + month.slice(1);
             $('#modal-form-payment input[name="bulan_dibayar"]').val(monthCapitalized);
-            $('#modal-form-payment input[name="nominal"]').val(nominal);
 
             $('#modal-form-payment button[type="submit"]').click(function(e) {
                 e.preventDefault();
@@ -335,7 +250,7 @@
                 dom: "Bfrtip",
                 buttons: [{
                     extend: "pdfHtml5",
-                    title: "Data SPP Tahun " + new Date().getFullYear(),
+                    title: "History Pembayaran SPP Tahun " + new Date().getFullYear(),
                     text: '<i class="fas fa-file-pdf"></i> PDF',
                     className: "btn btn-sm btn-danger",
                     // set alignment option
@@ -369,8 +284,7 @@
             $(".btn-pay-spp").click(function() {
                 const id = $(this).data("id");
                 const month = $(this).data("month");
-                const nominal = $(this).data("nomimal");
-                paySpp(id, month, nominal);
+                paySpp(id, month);
             });
         });
     </script>

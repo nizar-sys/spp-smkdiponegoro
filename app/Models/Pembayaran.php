@@ -18,5 +18,21 @@ class Pembayaran extends Model
         'bulan_dibayar',
         'tahun_dibayar',
         'jumlah_bayar',
+        'bukti_pembayaran',
     ];
+
+    public function petugas()
+    {
+        return $this->belongsTo(User::class, 'petugas_id');
+    }
+
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class, 'siswa_id');
+    }
+
+    public function spp()
+    {
+        return $this->belongsTo(Spp::class, 'spp_id');
+    }
 }
